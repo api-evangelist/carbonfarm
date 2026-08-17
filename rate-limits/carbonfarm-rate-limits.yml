@@ -1,0 +1,35 @@
+generated: '2026-08-17'
+method: probed
+source: >-
+  Live anonymous responses from https://cms.int.carbonfarm.app (/server/ping, /server/info,
+  /server/specs/oas) + full site walk of carbonfarm.tech for a documented limits page
+limit_count: 0
+limits: []
+summary: >-
+  No rate limits are documented and none are signalled at runtime. Every anonymous response
+  observed on the CMS API returned without a single rate-limit header, and CarbonFarm publishes no
+  developer documentation in which a limit could be stated.
+response_headers:
+  observed: []
+  expected_but_absent:
+  - RateLimit-Limit
+  - RateLimit-Remaining
+  - RateLimit-Reset
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - Retry-After
+  exhaustion_status: null
+  note: >-
+    An agent has no runtime signal to back off on. Directus does implement IP-based rate limiting
+    as an operator-configured option that returns 429 with Retry-After when enabled; whether
+    CarbonFarm has enabled it is not observable from outside without deliberately exhausting a
+    limit, which this pass does not do.
+evidence:
+- {url: 'https://cms.int.carbonfarm.app/server/ping', status: 200, rate_limit_headers: none, headers_returned: 'etag only'}
+- {url: 'https://cms.int.carbonfarm.app/server/info', status: 200, rate_limit_headers: none, headers_returned: 'cache-control: no-cache, vary, etag'}
+- {url: 'https://cms.int.carbonfarm.app/server/specs/oas', status: 200, rate_limit_headers: none, headers_returned: 'cache-control: no-cache, vary, etag'}
+- {url: 'https://carbonfarm.tech/developers', status: 404, note: No developer docs in which limits could be published.}
+quotas:
+  documented: false
+  note: No quota, fair-use or throughput policy is published.

@@ -1,0 +1,86 @@
+generated: '2026-08-17'
+method: probed
+source: live GET of /.well-known/* on every CarbonFarm-controlled host discovered in this pass
+summary: >-
+  Two real discovery documents were served, both from auth.carbonfarm.tech — CarbonFarm's own
+  Auth0 custom domain (DNS CNAME to carbonfarm-cd-ypkk7zmyvy5wepth.edge.tenants.eu.auth0.com).
+  It publishes an OpenID Connect discovery document and an RFC 8414 OAuth 2.0 authorization
+  server metadata document anonymously. No security.txt, api-catalog, ai-plugin.json or agent
+  card was served anywhere. The marketing host carbonfarm.tech 404s every /.well-known/ path.
+hosts:
+- host: https://auth.carbonfarm.tech
+  role: identity provider (Auth0 custom domain on the company's own apex domain)
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: carbonfarm-openid-configuration.json
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: carbonfarm-oauth-authorization-server.json
+  - path: /.well-known/jwks.json
+    status: 200
+    note: JWKS served; not archived here (key material rotates).
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+- host: https://carbonfarm.tech
+  role: marketing website (Next.js)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://cms.int.carbonfarm.app
+  role: Directus headless CMS (the one API surface with a published contract)
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    note: 'Directus route handler answers: ROUTE_NOT_FOUND.'
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://app.carbonfarm.tech
+  role: client platform (gated)
+  documents:
+  - path: /.well-known/security.txt
+    status: 301
+    note: >-
+      Every path on this host 301s to the Auth0 organization login at
+      web-login.carbonfarm.app. No /.well-known/ document is reachable anonymously.
+  - path: /.well-known/agent-card.json
+    status: 301
+  - path: /.well-known/agent.json
+    status: 301
+- host: https://carbonfarm.eu.auth0.com
+  role: Auth0 tenant canonical domain (referenced by the app login redirect)
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 200
+    note: >-
+      Same tenant as auth.carbonfarm.tech. Not archived separately — the custom-domain
+      document on the company's own apex is the canonical one for this profile.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+security_txt:
+  served: false
+  note: >-
+    No security.txt on any host, so no SecurityTxt pointer is emitted. RFC 9116 is the
+    cheapest single fix available to this company.

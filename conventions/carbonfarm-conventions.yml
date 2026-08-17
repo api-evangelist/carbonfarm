@@ -1,0 +1,138 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/carbonfarm-cms-openapi.json + graphql/carbonfarm-cms-schema.graphql +
+  live error responses observed on cms.int.carbonfarm.app
+summary: >-
+  Cross-cutting request/response semantics for the CarbonFarm CMS content API. Every convention
+  below is Directus 10.10.7 platform behaviour evidenced in the spec CarbonFarm serves or in a
+  live response we observed — CarbonFarm publishes no conventions documentation of its own, so
+  nothing here is a company claim.
+authentication:
+  styles: [api_key_query, api_key_header, oidc_session]
+  api_key_query: access_token
+  api_key_header: Authorization
+  see: authentication/carbonfarm-authentication.yml
+pagination:
+  style: offset-and-page
+  parameters:
+  - name: limit
+    in: query
+    note: Directus default 100; -1 returns all (permission-dependent).
+  - name: offset
+    in: query
+  - name: page
+    in: query
+    note: Page-based alternative to offset; combines with limit.
+  response_fields:
+  - data
+  - meta
+  meta:
+    parameter: meta
+    values: [total_count, filter_count, '*']
+    note: >-
+      Result counts are opt-in via the `meta` query parameter and returned in a sibling `meta`
+      object, not in headers. The spec declares an `x-metadata` schema with `total_count` and
+      `filter_count`.
+  evidence: openapi/carbonfarm-cms-openapi.json#/components/parameters/Limit,Offset,Page,Meta
+field_selection:
+  supported: true
+  parameter: fields
+  note: >-
+    Sparse fieldsets with dot-notation relational traversal (e.g. `fields=title,featured_image.id`)
+    and wildcards. GraphQL provides arbitrary selection over the same collection.
+  evidence: openapi/carbonfarm-cms-openapi.json#/components/parameters/Fields
+filtering:
+  supported: true
+  parameter: filter
+  style: json-filter-object
+  note: >-
+    Directus filter syntax — a JSON object of field/operator pairs (`_eq`, `_neq`, `_in`, `_gt`,
+    `_contains`, `_between`, `_null`, and logical `_and`/`_or`). The GraphQL SDL exposes the same
+    operator set as typed `*_filter_operators` inputs (`string_filter_operators`,
+    `number_filter_operators`, `date_filter_operators`, `boolean_filter_operators`,
+    `big_int_filter_operators`, `count_function_filter_operators`).
+  evidence: openapi/carbonfarm-cms-openapi.json#/components/parameters/Filter
+search:
+  supported: true
+  parameter: search
+  note: Full-text search across all string/text fields of the collection.
+sorting:
+  supported: true
+  parameter: sort
+  note: Comma-separated field list; `-` prefix descends.
+export:
+  supported: true
+  parameter: export
+  formats: [json, csv, xml]
+  note: Content negotiation is done by query parameter, not by Accept header.
+versioning:
+  api_scheme: none
+  note: >-
+    No version segment in any path and no version header. The only version signal is the
+    Directus release the instance runs, reported as `info.version` in the generated spec
+    (10.10.7 at harvest) — that is the vendor's version, not a CarbonFarm API version. A
+    Directus upgrade can change this contract with no notice to a consumer, because the spec is
+    generated from the live schema rather than published as a commitment.
+  content_versioning:
+    supported: true
+    parameter: version
+    note: >-
+      Per-item content versions (Directus Content Versioning). REST exposes a `version` query
+      parameter; GraphQL exposes `post_by_version(version, id)` returning `version_post`.
+  see: lifecycle/carbonfarm-lifecycle.yml
+idempotency:
+  documented: false
+  supported: false
+  header: null
+  note: >-
+    No idempotency mechanism. Zero matches for "idempoten" in the spec, no Idempotency-Key
+    parameter in any of the 14 operations, and the whole surface is read-only apart from the
+    /auth/* endpoints (login, logout, refresh, password request/reset) — which are inherently
+    non-idempotent and carry no key. No `Idempotency` pointer is emitted.
+error_envelope:
+  format: directus-errors-array
+  rfc9457: false
+  content_type: application/json
+  shape: '{"errors":[{"message":"...","extensions":{"code":"...","reason":"...","path":"..."}}]}'
+  code_field: errors[].extensions.code
+  observed_codes: [FORBIDDEN, INVALID_CREDENTIALS, INVALID_PAYLOAD, ROUTE_NOT_FOUND]
+  note: >-
+    A stable machine-readable code lives at `errors[].extensions.code`, which is the field an
+    agent should branch on. It is NOT RFC 9457 — no `application/problem+json`, no `type` URI, no
+    `title`/`status`/`detail` members. The generated spec declares no schema for any 4xx response,
+    so the envelope shape below was established by observing live responses.
+  see: errors/carbonfarm-problem-types.yml
+rate_limits:
+  documented: false
+  headers_observed: []
+  note: >-
+    No rate-limit headers were returned on any anonymous response and no limits are documented.
+    Directus supports IP rate limiting as an operator-configured option; whether CarbonFarm has
+    enabled it is not observable from outside.
+  see: rate-limits/carbonfarm-rate-limits.yml
+request_tracing:
+  request_id_header: null
+  note: No request-id or correlation-id header is documented or was observed.
+caching:
+  etag: true
+  etag_form: weak
+  observed:
+  - {url: /server/specs/oas, header: 'etag: W/"4657-5MLeDUDW4qIPXvtorcIqtAAVVAI"'}
+  - {url: /server/info, header: 'etag: W/"1d4-jtAm57rJXkGZKmjK2N0xRH3K4uw"', cache_control: no-cache}
+  - {url: /server/ping, header: 'etag: W/"4-DlFKBmK8tp3IY5U9HOJuPUDoGoc"'}
+  vary: [Origin, Cache-Control]
+  declared_in_spec: false
+  note: >-
+    Weak ETags are returned at runtime so If-None-Match conditional requests will work, but the
+    generated spec declares neither the ETag response header nor an If-None-Match parameter on any
+    operation. An agent reading only the contract would poll unconditionally.
+realtime:
+  style: graphql-subscriptions
+  transport: websocket
+  events: [create, update, delete]
+  fields: [post_mutated, directus_files_mutated]
+  note: >-
+    A real event surface exists in the GraphQL SDL. No AsyncAPI is published and no webhooks are
+    documented, so no AsyncAPI/Webhooks pointer is emitted.
+  see: graphql/carbonfarm-cms-graphql.md

@@ -1,0 +1,21 @@
+generated: '2026-08-17'
+method: generated
+source: >-
+  Generated from openapi/carbonfarm-cms-openapi.json and graphql/carbonfarm-cms-schema.graphql.
+  Every operationId and GraphQL field referenced by these skills was verified present in the
+  harvested artifacts. CarbonFarm publishes no AGENTS.md and no skill files of its own — searched
+  carbonfarm.tech and the carbonfarmtech GitHub organization (0 public repos).
+skills:
+- file: carbonfarm-read-news-posts.md
+  name: Read CarbonFarm news posts from the CMS
+  api: openapi/carbonfarm-cms-openapi.json
+  operations: [readItemsPost, readSingleItemsPost, getAsset, ping]
+- file: carbonfarm-query-cms-graphql.md
+  name: Query the CarbonFarm CMS over GraphQL
+  api: graphql/carbonfarm-cms-schema.graphql
+  operations: [post, post_by_id, post_aggregated, post_by_version, post_mutated, directus_files_mutated]
+scope_note: >-
+  Both skills cover the same surface: the Directus headless CMS behind carbonfarm.tech. That is
+  the only API CarbonFarm publishes a contract for. No skill was written for the rice MRV
+  platform, because that surface is behind an Auth0 organization login and publishes no
+  operations to ground a skill in — writing one would mean inventing it.

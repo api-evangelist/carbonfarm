@@ -1,0 +1,91 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/carbonfarm-cms-openapi.json (4xx responses across all 14 operations) +
+  live anonymous responses observed on cms.int.carbonfarm.app
+format: directus-errors-array
+rfc9457: false
+envelope:
+  content_type: application/json
+  shape: '{"errors":[{"message":"...","extensions":{"code":"...","reason":"...","path":"..."}}]}'
+  code_field: errors[].extensions.code
+  note: >-
+    The generated spec declares 4xx status codes but attaches NO response schema to any of them,
+    so the payload shape below could not be derived from the contract — it was established by
+    observing live anonymous responses. This is a real gap in the contract: a consumer reading the
+    spec alone cannot tell what an error body looks like.
+codes:
+- code: FORBIDDEN
+  status: 403
+  title: Insufficient permission for this collection
+  observed: true
+  evidence: GET https://cms.int.carbonfarm.app/items/post?limit=1
+  body: '{"errors":[{"message":"You don''t have permission to access this.","extensions":{"code":"FORBIDDEN"}}]}'
+  remediation: >-
+    The public role has no read permission on the `post` collection. Present a Directus static
+    token or session bearer token whose role grants read on the collection.
+- code: INVALID_CREDENTIALS
+  status: 401
+  title: Missing, expired or invalid token
+  observed: true
+  evidence: GET https://cms.int.carbonfarm.app/users/me
+  body: '{"errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}]}'
+  remediation: >-
+    Re-authenticate. For a session token, POST /auth/refresh with the refresh token; for a static
+    token, reissue it in Directus.
+- code: INVALID_PAYLOAD
+  status: 400
+  title: Request body failed validation
+  observed: true
+  evidence: GET https://cms.int.carbonfarm.app/graphql (no query string)
+  body: '{"errors":[{"message":"Invalid payload. Must provide query string.","extensions":{"code":"INVALID_PAYLOAD","reason":"Must provide query string"}}]}'
+  remediation: >-
+    Carries a human-readable `extensions.reason` alongside the code. Fix the named field and retry.
+- code: ROUTE_NOT_FOUND
+  status: 404
+  title: No such route
+  observed: true
+  evidence: GET https://cms.int.carbonfarm.app/items
+  body: '{"errors":[{"message":"Route /items doesn''t exist.","extensions":{"code":"ROUTE_NOT_FOUND","path":"/items"}}]}'
+  remediation: >-
+    Echoes the offending path in `extensions.path`. Only the `post` collection is exposed —
+    /items/post and /items/post/{id}. A bare /items is not a route.
+problems:
+- status: 401
+  title: Unauthorized
+  schema: none declared
+  source_operations:
+  - openapi/carbonfarm-cms-openapi.json#oauth
+  - openapi/carbonfarm-cms-openapi.json#oauthProvider
+  - openapi/carbonfarm-cms-openapi.json#passwordRequest
+  - openapi/carbonfarm-cms-openapi.json#passwordReset
+  - openapi/carbonfarm-cms-openapi.json#refresh
+  - openapi/carbonfarm-cms-openapi.json#getFiles
+  - openapi/carbonfarm-cms-openapi.json#getFile
+  - openapi/carbonfarm-cms-openapi.json#readItemsPost
+  - openapi/carbonfarm-cms-openapi.json#readSingleItemsPost
+  - openapi/carbonfarm-cms-openapi.json#serverInfo
+  note: >-
+    passwordRequest and passwordReset declare 401 as their ONLY response — no 2xx is documented
+    for either operation, so the success contract for a password flow is unspecified.
+- status: 404
+  title: Not Found
+  schema: none declared
+  source_operations:
+  - openapi/carbonfarm-cms-openapi.json#getAsset
+  - openapi/carbonfarm-cms-openapi.json#readSingleItemsPost
+  - openapi/carbonfarm-cms-openapi.json#serverInfo
+coverage:
+  operations_total: 14
+  operations_with_4xx: 11
+  operations_with_no_4xx: 4
+  operations_missing_4xx:
+  - openapi/carbonfarm-cms-openapi.json#login
+  - openapi/carbonfarm-cms-openapi.json#logout
+  - openapi/carbonfarm-cms-openapi.json#ping
+  responses_with_a_schema: 0
+  note: >-
+    login and logout declare only 200 — a login endpoint with no documented failure response.
+    No 5xx is declared anywhere in the contract.
+docs: null
+docs_note: CarbonFarm publishes no error reference. Nothing here was searched; it was derived and observed.

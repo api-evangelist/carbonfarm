@@ -1,0 +1,122 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/carbonfarm-cms-openapi.json + graphql/carbonfarm-cms-schema.graphql +
+  mcp/carbonfarm-mcp.yml
+summary: >-
+  CarbonFarm's CMS projects one content core through two surfaces — a Directus REST API and a
+  Directus GraphQL API — and they are NOT identical. GraphQL adds aggregation and realtime
+  subscriptions that REST does not expose; REST adds asset delivery and the whole auth surface
+  that GraphQL does not. The MCP column is a derived candidate: CarbonFarm operates no MCP server.
+surfaces:
+  openapi:
+    file: openapi/carbonfarm-cms-openapi.json
+    source_url: https://cms.int.carbonfarm.app/server/specs/oas
+    operations: 14
+    gated: false
+    note: Spec is anonymous (200). Data operations return 403 anonymously.
+  graphql:
+    endpoint: https://cms.int.carbonfarm.app/graphql
+    sdl_url: https://cms.int.carbonfarm.app/server/specs/graphql
+    file: graphql/carbonfarm-cms-schema.graphql
+    gated: false
+    note: >-
+      SDL is published anonymously, so no introspection query was needed or sent. Executing a
+      query requires a token.
+  mcp:
+    url: null
+    gated: null
+    note: No MCP server exists. Tools below are candidates derived from the REST operations.
+crosswalk:
+- tool: read_posts
+  category: content
+  rest: [readItemsPost]
+  graphql: [post]
+  binding: rest
+  confidence: high
+  note: >-
+    Direct equivalence. Both accept filter/sort/limit/offset/page/search; the REST form adds
+    `fields`, `meta` and `export`, the GraphQL form gets field selection natively.
+- tool: read_post
+  category: content
+  rest: [readSingleItemsPost]
+  graphql: [post_by_id]
+  binding: rest
+  confidence: high
+  note: Keyed by `slug` (the collection's primary key is an ID slug, not a surrogate id).
+- tool: list_files
+  category: media
+  rest: [getFiles]
+  graphql: []
+  binding: rest
+  confidence: high
+  note: >-
+    directus_files is a type in the SDL and is reachable as a nested relation from `post`, but no
+    root Query field exposes a file collection, so there is no GraphQL equivalent of this listing.
+- tool: get_file
+  category: media
+  rest: [getFile]
+  graphql: []
+  binding: rest
+  confidence: high
+- tool: get_asset
+  category: media
+  rest: [getAsset]
+  graphql: []
+  binding: rest
+  confidence: high
+  note: >-
+    Binary delivery endpoint. The only operation on the surface that is anonymously usable in
+    practice — carbonfarm.tech loads its post images through it.
+- tool: server_info
+  category: platform
+  rest: [serverInfo]
+  graphql: []
+  binding: rest
+  confidence: high
+- tool: ping
+  category: platform
+  rest: [ping]
+  graphql: []
+  binding: rest
+  confidence: high
+graphql_only:
+- field: post_aggregated
+  reason: >-
+    groupBy/count aggregation over posts. No REST operation performs aggregation — the REST side
+    can only return counts via the opt-in `meta` object (total_count/filter_count).
+- field: post_by_version
+  reason: >-
+    Returns a `version_post` for a named content version. REST exposes a `version` query
+    parameter on the single-item read, so the capability overlaps but the typed
+    version-object return has no REST analogue.
+- field: 'Subscription.post_mutated(event: create|update|delete)'
+  reason: >-
+    Realtime WebSocket subscription. REST has no polling-free equivalent and CarbonFarm publishes
+    no AsyncAPI and no webhooks, so this capability is invisible outside the SDL.
+- field: 'Subscription.directus_files_mutated(event: create|update|delete)'
+  reason: Realtime file mutation stream; no REST or webhook equivalent.
+mcp_only: []
+mcp_only_note: No MCP server exists, so there can be no MCP-only capability.
+rest_only:
+- capability: authentication
+  operations: [login, logout, refresh, oauth, oauthProvider, passwordRequest, passwordReset]
+  reason: >-
+    The entire session/credential surface is REST-only and is deliberately excluded from the
+    candidate tool list — not agent-appropriate surface.
+- capability: media
+  operations: [getFiles, getFile, getAsset]
+  reason: No root GraphQL Query field for files or assets; binary delivery is REST by nature.
+- capability: platform
+  operations: [serverInfo, ping]
+  reason: Server metadata and health are not modelled in the GraphQL schema.
+coverage:
+  rest_operations_total: 14
+  rest_operations_with_a_candidate_tool: 7
+  rest_operations_excluded_by_policy: 7
+  graphql_root_fields_total: 6
+  graphql_fields_bound_to_rest: 2
+  graphql_only_fields: 4
+  mcp_tools_published: 0
+  mcp_tools_candidate: 7
+  mcp_only: 0

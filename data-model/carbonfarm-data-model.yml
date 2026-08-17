@@ -1,0 +1,71 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/carbonfarm-cms-openapi.json (components.schemas) +
+  graphql/carbonfarm-cms-schema.graphql (typed field graph)
+summary: >-
+  A two-entity content model. The Directus-generated OpenAPI declares only four schemas
+  (Query, x-metadata, Files, ItemsPost); the GraphQL SDL is the richer source because it types
+  every field and names the relationship. This is the CMS behind carbonfarm.tech's news posts —
+  it carries no rice, paddy, emissions, project or carbon-credit entity of any kind. CarbonFarm's
+  MRV data model is not exposed on any public surface.
+entities:
+- name: post
+  rest_paths:
+  - /items/post
+  - /items/post/{id}
+  graphql_type: post
+  primary_key:
+    field: slug
+    type: ID
+    note: >-
+      The primary key is the human-readable slug, not a surrogate id or UUID — so a post's
+      identity is its URL segment and renaming it breaks external references.
+  fields:
+  - {name: slug, type: ID!, role: primary_key}
+  - {name: title, type: String}
+  - {name: description, type: String!}
+  - {name: content, type: String!}
+  - {name: type, type: String!, note: Editorial category; no enum is published, so valid values are not discoverable from the contract.}
+  - {name: status, type: String, note: 'Directus publish workflow (typically draft/published/archived); no enum published.'}
+  - {name: datetime, type: Date!, note: Editorial publication timestamp, distinct from the audit dates.}
+  - {name: is_pinned, type: Boolean!}
+  - {name: featured_image, type: directus_files, role: relation}
+  - {name: user_created, type: String, role: audit}
+  - {name: date_created, type: Date, role: audit}
+  - {name: user_updated, type: String, role: audit}
+  - {name: date_updated, type: Date, role: audit}
+  aggregation:
+    graphql_field: post_aggregated
+    type: post_aggregated
+    note: groupBy + count aggregation is exposed over GraphQL only; there is no REST equivalent.
+  versioning:
+    graphql_field: post_by_version
+    type: version_post
+    rest_parameter: version
+- name: directus_files
+  rest_paths:
+  - /files
+  - /files/{id}
+  - /assets/{id}
+  graphql_type: directus_files
+  openapi_schema: Files
+  primary_key:
+    field: id
+    type: UUID
+  note: >-
+    Directus' built-in file/asset entity. /assets/{id} is the only operation on the whole surface
+    that is anonymously reachable in practice — carbonfarm.tech loads its post images from it.
+relationships:
+- from: post
+  to: directus_files
+  cardinality: has_one
+  via: featured_image
+  kind: many-to-one
+  evidence: graphql/carbonfarm-cms-schema.graphql (post.featured_image -> directus_files)
+id_prefixes: []
+id_prefixes_note: >-
+  No id-prefix scheme. Posts are keyed by slug; files by UUID. Nothing in the contract encodes
+  entity type into the identifier.
+render: null
+render_note: No subway/ diagram in this repo — a two-entity graph does not warrant one.

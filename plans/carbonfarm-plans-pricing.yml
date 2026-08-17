@@ -1,0 +1,36 @@
+generated: '2026-08-17'
+method: searched
+source: https://carbonfarm.tech/ (full site walk — Home, Our Tech, News, About, Contact, Legal, Privacy, Press)
+plan_count: 0
+plans: []
+summary: >-
+  CarbonFarm publishes no pricing of any kind. There is no pricing page, no plan tiers, no
+  published rate card, and no self-serve sign-up. The commercial motion is entirely enterprise:
+  the site's only conversion paths are a contact form and a "Client Login" for existing customers.
+evidence:
+- {url: 'https://carbonfarm.tech/pricing', status: 404}
+- {url: 'https://carbonfarm.tech/plans', status: 404}
+- {url: 'https://carbonfarm.tech/price', status: 404}
+- {url: 'https://carbonfarm.tech/demo', status: 404}
+- {url: 'https://carbonfarm.tech/request-demo', status: 404}
+- {url: 'https://carbonfarm.tech/signup', status: 404}
+- {url: 'https://carbonfarm.tech/contact', status: 200, note: The only commercial entry point — a contact form.}
+- {url: 'https://app.carbonfarm.tech', status: 302, note: 'Client Login; 302s to an Auth0 organization login, so an account must already exist.'}
+commercial_model:
+  self_serve: false
+  free_tier: false
+  trial: false
+  contact_sales_only: true
+  note: >-
+    Consistent with the business: CarbonFarm sells satellite MRV programmes to rice value-chain
+    buyers, project developers and standards bodies (named publicly: Mars Food, Tilda, Beneo,
+    Amru Rice, Sustainable Rice Platform, Ostrom Climate, Core Carbon X, Vida Energy, Fortune
+    Rice), plus development and NGO clients. Deals of that shape are negotiated per programme, so
+    the absence of a price list is expected rather than a defect. The absence of any published
+    commercial page at all — no "how we charge", no per-hectare or per-credit basis — is the
+    finding.
+api_pricing:
+  published: false
+  note: >-
+    No API is sold. The one API with a published contract (the Directus CMS behind the marketing
+    site) is internal infrastructure and is not a commercial product.

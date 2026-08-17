@@ -1,20 +1,69 @@
 aid: carbonfarm
 name: CarbonFarm
-description: 'CarbonFarm is a company surfaced as a portfolio company of serena and added to the API Evangelist
-  network as a stub for enrichment. Sector: climate-tech. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: >-
+  CarbonFarm Technology is a French climate-tech company (registered in Nanterre, SIREN 912160389)
+  that uses satellite imagery and proprietary machine-learning models to monitor, measure and
+  verify greenhouse-gas reductions in rice production. Rice accounts for roughly 12% of global
+  methane emissions, and practices such as Alternate Wetting and Drying can cut paddy methane
+  substantially — but conventional MRV depends on self-declared practices recorded in paper
+  logbooks, which is expensive to collect from smallholders and open to fraud. CarbonFarm detects
+  water-management and straw-management practices remotely at paddy level, estimates baseline and
+  project emissions with validated models, and verifies additionality, at a fraction of the cost
+  of ground-based MRV. Customers and partners named publicly include Mars Food, Tilda, Beneo, Amru
+  Rice, Vida Energy, Fortune Rice, Ostrom Climate, Core Carbon X, the Sustainable Rice Platform,
+  UNDP, Danone, Rikolto, Cornell University, IRRI and Regrow Ag. CarbonFarm operates no developer
+  program: there is no developer portal, API reference, SDK or public API product, and the client
+  platform sits behind an Auth0 organization login. The one machine-readable contract it publishes
+  is the Directus headless CMS behind its marketing website.
 url: https://raw.githubusercontent.com/api-evangelist/carbonfarm/refs/heads/main/apis.yml
+image: https://carbonfarm.tech/opengraph-image.png?opengraph-image.d25adc5b.png
 x-type: company
 x-source: serena-portfolio
-x-tier: stub
-x-tier-reason: portfolio-lead
-specificationVersion: '0.20'
+specificationVersion: '0.21'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
 - Company
 - Climate Tech
-apis: []
+- Carbon Credits
+- Agriculture
+- MRV
+- Satellite Imagery
+- Remote Sensing
+- Machine Learning
+- Sustainability
+- Content Management
+apis:
+- name: CarbonFarm CMS Content API
+  description: >-
+    The Directus 10.10.7 headless CMS that serves carbonfarm.tech's news posts and image assets.
+    It publishes a real OpenAPI 3.0.1 (14 operations) and a full GraphQL SDL anonymously at
+    /server/specs/oas and /server/specs/graphql, but both are auto-generated from the live schema
+    rather than authored as a developer contract, and the data operations return HTTP 403 to
+    anonymous callers. This is internal website infrastructure, NOT CarbonFarm's rice MRV product
+    API — the content model is two entities (post, directus_files) and contains no paddy,
+    emissions, project or carbon-credit data. Recorded because it is the only machine-readable
+    contract the company publishes; it is not a product CarbonFarm sells or supports.
+  baseURL: https://cms.int.carbonfarm.app
+  tags:
+  - Content Management
+  - GraphQL
+  properties:
+  - type: OpenAPI
+    url: openapi/carbonfarm-cms-openapi.json
+  - type: GraphQL
+    url: graphql/carbonfarm-cms-schema.graphql
+  - type: Overlay
+    url: overlays/carbonfarm-cms-overlay.yaml
+  x-humanurl-reason: >-
+    humanURL is deliberately omitted. There is no human-readable page for this API anywhere — no
+    docs, no reference, and the Directus admin app at /admin returns 404. Pointing humanURL at the
+    marketing news page would assert documentation that does not exist.
+  x-ownership-evidence: >-
+    The spec's servers[] names cms.int.carbonfarm.app (the fetch host); /server/info reports
+    project_name "CarbonFarm CMS"; the host is a subdomain of carbonfarm.app, which also serves
+    CarbonFarm's client login (web-login.carbonfarm.app) and portal (portal.carbonfarm.app); and
+    carbonfarm.tech loads its post images from cms.int.carbonfarm.app/assets/.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -23,3 +72,85 @@ maintainers:
 common:
 - type: Website
   url: https://www.carbonfarm.tech
+- type: Blog
+  url: https://carbonfarm.tech/posts
+- type: Support
+  url: https://carbonfarm.tech/contact
+- type: Login
+  url: https://app.carbonfarm.tech
+- type: PrivacyPolicy
+  url: https://carbonfarm.tech/privacy
+- type: GitHubOrganization
+  url: https://github.com/carbonfarmtech
+- type: Authentication
+  url: authentication/carbonfarm-authentication.yml
+- type: WellKnown
+  url: well-known/carbonfarm-well-known.yml
+- type: Conventions
+  url: conventions/carbonfarm-conventions.yml
+- type: ErrorCatalog
+  url: errors/carbonfarm-problem-types.yml
+- type: DataModel
+  url: data-model/carbonfarm-data-model.yml
+- type: Conformance
+  url: conformance/carbonfarm-conformance.yml
+- type: Lifecycle
+  url: lifecycle/carbonfarm-lifecycle.yml
+- type: Plans
+  url: plans/carbonfarm-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/carbonfarm-rate-limits.yml
+- type: ToolCrosswalk
+  url: mcp/carbonfarm-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/carbonfarm-llms.txt
+- type: DomainSecurity
+  url: security/carbonfarm-domain-security.yml
+x-pointers-deliberately-withheld:
+  note: >-
+    These artifacts exist on disk or were probed, but no canonical pointer is emitted because the
+    pointer would assert something CarbonFarm does not publish. Recorded so a later pass does not
+    "fix" the omission.
+  withheld:
+  - {type: MCPServer, reason: 'mcp/carbonfarm-mcp.yml is a DERIVED candidate with deployment.mode = none. CarbonFarm ships no hosted endpoint and no stdio package.'}
+  - {type: AgentCard, reason: '/.well-known/agent-card.json and /.well-known/agent.json return 404 or 301 on every host. Never generated.'}
+  - {type: SecurityTxt, reason: 'No security.txt on any host (404 everywhere).'}
+  - {type: Idempotency, reason: 'Zero idempotency support — no Idempotency-Key on any of the 14 operations, no "idempoten" match in the spec.'}
+  - {type: Compliance, reason: 'No certifications, no compliance page, no trust center. A privacy policy is not a compliance program.'}
+  - {type: TrustCenter, reason: 'probe-security-programs.py returned trust=none.'}
+  - {type: Security, reason: 'No vulnerability disclosure policy, no bug bounty, no security@ contact published. probe returned vdp=none.'}
+  - {type: StatusPage, reason: 'No status page. carbonfarm.statuspage.io is unclaimed and 302s to statuspage.io itself.'}
+  - {type: Deprecation, reason: 'No deprecation policy, no Sunset/Deprecation header, no API versioning scheme at all.'}
+  - {type: ChangeLog, reason: 'carbonfarm.tech/posts is company news, not an API changelog. Wired as Blog.'}
+  - {type: SDKs, reason: 'No first-party client library in any registry — npm, PyPI, RubyGems and crates.io all return nothing for "carbonfarm".'}
+  - {type: Packages, reason: 'Same — no packages exist to catalogue.'}
+  - {type: AsyncAPI, reason: 'No AsyncAPI published. GraphQL subscriptions exist in the SDL and are recorded there as evidence, not promoted to an event contract.'}
+  - {type: Webhooks, reason: 'No webhooks documented anywhere.'}
+  - {type: Pricing, reason: 'No pricing page (/pricing, /plans, /price all 404).'}
+  - {type: TermsOfService, reason: 'No terms of service published; the /legal page carries a privacy policy and a stakeholder consultation document only.'}
+  - {type: SignUp, reason: 'No self-serve sign-up (/signup, /register 404). Login is wired instead.'}
+  - {type: Documentation, reason: 'No documentation of any kind exists.'}
+  - {type: DeveloperPortal, reason: '/developers and /api return 404. No developer portal.'}
+  - {type: APIReference, reason: 'No API reference exists.'}
+  - {type: GettingStarted, reason: 'No getting-started or quickstart page.'}
+  - {type: Roadmap, reason: 'No public roadmap.'}
+  - {type: Postman, reason: 'No public Postman collection or workspace found.'}
+  - {type: Sandbox, reason: 'No sandbox, test mode, or test credentials published.'}
+  - {type: CLI, reason: 'No first-party CLI.'}
+  - {type: OAuthScopes, reason: 'The Auth0 tenant advertises only the default OIDC claim scopes, not an API permission model, and /.well-known/oauth-protected-resource is 404. Recorded inside authentication/ instead of forcing an empty scopes artifact.'}
+x-enrichment:
+  date: '2026-08-17'
+  status: enriched
+  artifacts_added: 23
+  pass: local-v1
+x-coverage:
+  state: covered
+  detail: >-
+    STEP 0b contract discovery beat the marketing site. A first-round "no spec" verdict would have
+    been wrong: a live OpenAPI 3.0.1 and a full GraphQL SDL are published anonymously by
+    CarbonFarm's Directus CMS at cms.int.carbonfarm.app — a host found by following the image URLs
+    on carbonfarm.tech and by DNS enumeration after crt.sh returned 502. The rice MRV product API
+    remains gated behind an Auth0 organization login at app.carbonfarm.tech, which 301s every path.
+  checked: '2026-08-17'

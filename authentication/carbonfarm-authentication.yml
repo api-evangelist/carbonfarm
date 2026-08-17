@@ -1,0 +1,110 @@
+generated: '2026-08-17'
+method: probed
+source: >-
+  openapi/carbonfarm-cms-openapi.json (securitySchemes) +
+  https://auth.carbonfarm.tech/.well-known/openid-configuration (live probe)
+summary:
+  types:
+  - apiKey
+  - openIdConnect
+  api_key_in:
+  - header
+  - query
+  oauth2_flows:
+  - authorizationCode
+  - clientCredentials
+  - refreshToken
+  - deviceCode
+  note: >-
+    Two distinct authentication surfaces, and they belong to different systems. The CMS content
+    API authenticates with a Directus static token or session bearer token; the client platform
+    authenticates humans through CarbonFarm's Auth0 tenant. Neither is documented publicly —
+    everything below was read off machine-readable endpoints the company serves anonymously.
+schemes:
+- name: KeyAuth
+  type: apiKey
+  in: query
+  parameter: access_token
+  sources:
+  - openapi/carbonfarm-cms-openapi.json
+  note: >-
+    Directus static access token passed as a query parameter. Directus' own guidance is to prefer
+    the header form; a token in a query string lands in access logs and Referer headers.
+- name: Auth
+  type: apiKey
+  in: header
+  parameter: Authorization
+  sources:
+  - openapi/carbonfarm-cms-openapi.json
+  note: 'Bearer form: `Authorization: Bearer <static-or-session-token>`.'
+- name: Auth0 OIDC (client platform)
+  type: openIdConnect
+  openIdConnectUrl: https://auth.carbonfarm.tech/.well-known/openid-configuration
+  issuer: https://auth.carbonfarm.tech/
+  sources:
+  - well-known/carbonfarm-openid-configuration.json
+  probed: true
+  http_status: 200
+  endpoints:
+    authorization: https://auth.carbonfarm.tech/authorize
+    token: https://auth.carbonfarm.tech/oauth/token
+    userinfo: https://auth.carbonfarm.tech/userinfo
+    jwks: https://auth.carbonfarm.tech/.well-known/jwks.json
+    revocation: https://auth.carbonfarm.tech/oauth/revoke
+    device_authorization: https://auth.carbonfarm.tech/oauth/device/code
+    end_session: https://auth.carbonfarm.tech/oidc/logout
+    dynamic_registration: https://auth.carbonfarm.tech/oidc/register
+  grant_types_supported:
+  - authorization_code
+  - client_credentials
+  - refresh_token
+  - implicit
+  - password
+  - urn:ietf:params:oauth:grant-type:device_code
+  - urn:ietf:params:oauth:grant-type:token-exchange
+  - urn:ietf:params:oauth:grant-type:jwt-bearer
+  scopes_advertised:
+  - openid
+  - profile
+  - offline_access
+  - email
+  - email_verified
+  - name
+  - given_name
+  - family_name
+  - nickname
+  - picture
+  - phone
+  - address
+  - created_at
+  - identities
+  pkce:
+    supported: true
+    code_challenge_methods:
+    - S256
+    - plain
+  id_token_signing_algs:
+  - RS256
+  - PS256
+  - HS256
+  dpop_signing_algs:
+  - ES256
+  note: >-
+    Organization-scoped login: app.carbonfarm.tech redirects with
+    `organization=org_PyIwqJe0CACfELBB&organization_name=carbonfarm`, so access is bound to an
+    Auth0 organization — a tenant must exist before a login can succeed. The scope set is Auth0's
+    default OIDC claim set, not an API permission model; no resource-server scopes are advertised,
+    and /.well-known/oauth-protected-resource returns 404. That is why no `scopes/` artifact was
+    written — there is no API scope surface to record, only OIDC identity claims.
+observed_failures:
+- request: GET https://cms.int.carbonfarm.app/items/post?limit=1
+  status: 403
+  body: '{"errors":[{"message":"You don''t have permission to access this.","extensions":{"code":"FORBIDDEN"}}]}'
+- request: GET https://cms.int.carbonfarm.app/users/me
+  status: 401
+  body: '{"errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}]}'
+docs: null
+docs_note: >-
+  CarbonFarm publishes no authentication documentation. There is no developer portal, no API
+  reference, and no getting-started page anywhere on carbonfarm.tech — the site's only
+  developer-adjacent link is "Client Login".

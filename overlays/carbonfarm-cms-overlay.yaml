@@ -1,0 +1,148 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the CarbonFarm CMS content API
+  version: 1.0.0
+extends: openapi/carbonfarm-cms-openapi.json
+x-generated: '2026-08-17'
+x-method: generated
+x-source: >-
+  Enhancements derived from this pass over https://cms.int.carbonfarm.app/server/specs/oas. The
+  harvested spec in openapi/_original/ is never mutated; every correction below is expressed as an
+  overlay action so the provider's own document stays byte-faithful.
+actions:
+# ---------------------------------------------------------------------------
+# The single most consequential defect: servers[0].url has no scheme. Directus
+# emits the bare host, so the document is not resolvable by a generator or an
+# agent as published.
+# ---------------------------------------------------------------------------
+- target: $.servers
+  description: >-
+    Replace the schemeless server entry ("cms.int.carbonfarm.app", emitted by Directus 10.10.7)
+    with the resolvable absolute URL observed to serve this API.
+  update:
+  - url: https://cms.int.carbonfarm.app
+    description: CarbonFarm CMS (Directus 10.10.7). Verified live 2026-08-17.
+- target: $.info
+  description: Title the document for what it actually is, and record provenance and ownership.
+  update:
+    title: CarbonFarm CMS Content API
+    description: >-
+      Directus-generated contract for the headless CMS that serves carbonfarm.tech's news posts
+      and image assets. Auto-generated from the live schema at /server/specs/oas — it is not a
+      published developer contract, carries no versioning commitment, and can change without
+      notice when the Directus instance or its collections change. This is NOT CarbonFarm's rice
+      MRV product API; that surface sits behind an Auth0 organization login and publishes no
+      contract.
+    x-apievangelist-provenance:
+      harvested_from: https://cms.int.carbonfarm.app/server/specs/oas
+      harvested: '2026-08-17'
+      http_status: 200
+      generator: Directus 10.10.7 (dynamic specification)
+      ownership_evidence: >-
+        servers[] names the fetch host; /server/info reports project_name "CarbonFarm CMS"; the
+        host is a subdomain of carbonfarm.app, which also serves web-login and portal; and
+        carbonfarm.tech loads its post images from cms.int.carbonfarm.app/assets/.
+    x-apievangelist-surface: internal-infrastructure
+- target: $
+  description: >-
+    Declare the security requirement globally. The document defines KeyAuth and Auth but sets no
+    top-level `security`, so the spec reads as though every operation were public — it is not:
+    data reads return 403 anonymously.
+  update:
+    security:
+    - Auth: []
+    - KeyAuth: []
+- target: $.components.securitySchemes.KeyAuth
+  description: Warn that this scheme puts a credential in the query string.
+  update:
+    description: >-
+      Directus static access token passed as the `access_token` QUERY parameter. Discouraged — a
+      token in a query string is captured by access logs, proxies and Referer headers. Prefer the
+      Auth (Authorization header) scheme.
+- target: $.components.securitySchemes.Auth
+  update:
+    description: 'Bearer token in the Authorization header: `Authorization: Bearer <token>`.'
+# ---------------------------------------------------------------------------
+# Error contract. The generated document declares 4xx status codes with no
+# schema at all, so a consumer cannot tell what an error body looks like.
+# ---------------------------------------------------------------------------
+- target: $.components.schemas
+  description: >-
+    Add the Directus error envelope observed on live responses, so 4xx responses can reference a
+    real schema instead of an empty declaration.
+  update:
+    DirectusError:
+      type: object
+      description: >-
+        Error envelope returned by every Directus 4xx/5xx response. NOT RFC 9457 — there is no
+        application/problem+json, no type URI, and no title/status/detail members. Branch on
+        errors[].extensions.code.
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message: {type: string}
+              extensions:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Stable machine-readable error code.
+                    enum: [FORBIDDEN, INVALID_CREDENTIALS, INVALID_PAYLOAD, ROUTE_NOT_FOUND]
+                  reason:
+                    type: string
+                    description: Present on INVALID_PAYLOAD; names the failing constraint.
+                  path:
+                    type: string
+                    description: Present on ROUTE_NOT_FOUND; echoes the requested path.
+- target: $.paths['/items/post'].get.responses['401']
+  description: Attach the observed error schema to the declared 401.
+  update:
+    description: >-
+      Unauthorized — missing, expired or invalid token. Anonymous requests to this operation
+      return 403 FORBIDDEN rather than 401, because the public role exists but holds no read
+      permission on the collection.
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DirectusError'
+- target: $.paths['/items/post'].get
+  description: Record the anonymous-access finding and the undeclared caching behaviour.
+  update:
+    x-apievangelist-observed:
+      anonymous_status: 403
+      anonymous_code: FORBIDDEN
+      etag: 'weak ETags are returned at runtime but are not declared in this document'
+# ---------------------------------------------------------------------------
+# Gaps recorded rather than silently fixed.
+# ---------------------------------------------------------------------------
+- target: $.paths['/auth/password/request'].post
+  description: Flag that no success response is declared.
+  update:
+    x-apievangelist-gap: >-
+      Declares 401 as its ONLY response. No 2xx is documented, so the success contract for the
+      password-request flow is unspecified.
+- target: $.paths['/auth/password/reset'].post
+  update:
+    x-apievangelist-gap: >-
+      Declares 401 as its ONLY response. No 2xx is documented.
+- target: $.paths['/auth/login'].post
+  update:
+    x-apievangelist-gap: >-
+      Declares only 200. A login endpoint with no documented failure response — a consumer cannot
+      tell from the contract what a bad credential returns.
+- target: $.info
+  description: Record the checks this document does not satisfy, for the provider-facing report.
+  update:
+    x-apievangelist-findings:
+      servers_schemeless: true
+      global_security_absent: true
+      error_schemas_declared: 0
+      operations_missing_4xx: [login, logout, ping]
+      rfc9457: false
+      idempotency: false
+      rate_limit_headers: false
+      versioning_scheme: none
+      etag_declared_in_spec: false

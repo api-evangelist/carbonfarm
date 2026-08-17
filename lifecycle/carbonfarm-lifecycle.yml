@@ -1,0 +1,64 @@
+generated: '2026-08-17'
+method: probed
+source: >-
+  openapi/carbonfarm-cms-openapi.json + live probes of status/deprecation/SLA surfaces on
+  carbonfarm.tech
+summary: >-
+  There is no published API lifecycle. No versioning scheme, no deprecation policy, no SLA, no
+  status page, and no changelog for the API. The only version string on the whole surface is the
+  Directus release the CMS happens to be running.
+versioning:
+  scheme: none
+  current: null
+  vendor_version: 10.10.7
+  vendor_version_source: openapi/carbonfarm-cms-openapi.json#/info/version
+  docs: null
+  note: >-
+    No version segment in any of the 14 paths and no version header. `info.version` reports the
+    Directus release, not a CarbonFarm API version. Because the spec is generated from the live
+    schema at request time, adding or removing a collection silently changes the contract — a
+    consumer has no version to pin and no notification channel to watch.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No deprecation policy published anywhere; no operation in the spec is marked deprecated.
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+  note: No SLA, uptime commitment or support-response commitment is published.
+status_page:
+  url: null
+  probed:
+  - url: https://status.carbonfarm.tech
+    status: 0
+    note: DNS does not resolve.
+  - url: https://carbonfarm.tech/status
+    status: 404
+  - url: https://carbonfarm.statuspage.io
+    status: 302
+    note: >-
+      Redirects to https://www.statuspage.io/ — an unclaimed subdomain, NOT a CarbonFarm status
+      page. Recorded so a later pass does not mistake the 302 for a hit.
+  note: >-
+    No status page exists. No `StatusPage` pointer is emitted.
+changelog:
+  url: null
+  note: >-
+    No API changelog. https://carbonfarm.tech/posts is a company news blog (funding, partnerships,
+    pilots) — it is wired as `Blog`, not as `ChangeLog`, because it records no API or product
+    release history. No `ChangeLog` pointer is emitted.
+support:
+  url: https://carbonfarm.tech/contact
+  channel: web form
+  note: A contact form is the only support channel; no developer support address, forum or community.
+maturity:
+  stage: internal-infrastructure
+  note: >-
+    The CMS API is production infrastructure for the marketing site, not a product with a
+    lifecycle. The `int` in cms.int.carbonfarm.app is the company's own signal that this host is
+    internal. The MRV product API — if one exists — sits behind the Auth0 organization login and
+    publishes no lifecycle artifacts at all.

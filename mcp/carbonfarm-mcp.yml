@@ -1,0 +1,72 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/carbonfarm-cms-openapi.json
+status: candidate
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  verified: derived
+  note: >-
+    CarbonFarm ships NO MCP server — not a hosted endpoint, not an npx/stdio package, nothing.
+    Searched: carbonfarm.tech (whole site), the carbonfarmtech GitHub organization (0 public
+    repos), npm (0 results for "carbonfarm"), PyPI, RubyGems and crates.io. The tools below are a
+    CANDIDATE surface derived from the 14 operations in the OpenAPI CarbonFarm's Directus instance
+    generates. No endpoint URL is asserted because none exists; `mode: none` is the honest value.
+    `auth: api-key` records what a server WOULD need (a Directus static token), not something
+    CarbonFarm operates.
+server:
+  name: carbonfarm-cms
+  transport: null
+  url: null
+  published: false
+search_evidence:
+- {surface: 'https://carbonfarm.tech/', result: 'no MCP, agent or developer mention anywhere on the site'}
+- {surface: 'https://github.com/carbonfarmtech', result: 'organization exists (verified: name "CarbonFarm Technology", blog www.carbonfarm.tech) but has 0 public repositories'}
+- {surface: 'https://registry.npmjs.org/-/v1/search?text=carbonfarm', result: 'total 0'}
+- {surface: 'https://pypi.org/pypi/carbonfarm/json', result: '404'}
+- {surface: '/.well-known/oauth-protected-resource on every host', result: '404 — no MCP resource server advertised'}
+tools:
+- name: read_posts
+  description: List CarbonFarm news posts with filter, search, sort and pagination.
+  source_operation: openapi/carbonfarm-cms-openapi.json#readItemsPost
+  input_schema_source: parameters Fields, Limit, Meta, Offset, Sort, Filter, Search, Page
+- name: read_post
+  description: Retrieve a single news post by its slug.
+  source_operation: openapi/carbonfarm-cms-openapi.json#readSingleItemsPost
+  input_schema_source: parameters Id, Fields, Meta, Version
+- name: list_files
+  description: List file metadata in the CMS.
+  source_operation: openapi/carbonfarm-cms-openapi.json#getFiles
+  input_schema_source: parameters Fields, Limit, Offset, Sort, Filter, Search, Page
+- name: get_file
+  description: Retrieve metadata for a single file by UUID.
+  source_operation: openapi/carbonfarm-cms-openapi.json#getFile
+  input_schema_source: parameter Id
+- name: get_asset
+  description: Fetch a stored asset (image) by UUID, with optional transformation parameters.
+  source_operation: openapi/carbonfarm-cms-openapi.json#getAsset
+  input_schema_source: parameter UUId
+- name: server_info
+  description: Return CMS project information.
+  source_operation: openapi/carbonfarm-cms-openapi.json#serverInfo
+- name: ping
+  description: Health check; returns "pong".
+  source_operation: openapi/carbonfarm-cms-openapi.json#ping
+excluded_operations:
+  note: >-
+    The seven /auth/* operations (login, logout, refresh, oauth, oauthProvider, passwordRequest,
+    passwordReset) are deliberately NOT modelled as tools. Credential and session handling is not
+    agent-appropriate surface, and passwordRequest/passwordReset declare no success response at
+    all in the contract.
+  operations: [login, logout, refresh, oauth, oauthProvider, passwordRequest, passwordReset]
+caveats:
+- >-
+  Every data tool above returns 403 anonymously (the public Directus role has no read permission),
+  so a candidate server would be useless without a static token the company issues.
+- >-
+  This surface is the marketing website's content model — news posts and images. It contains no
+  rice, paddy, emissions, MRV or carbon-credit capability. An agent given these tools learns
+  nothing about what CarbonFarm actually sells.
