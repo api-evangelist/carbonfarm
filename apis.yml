@@ -45,42 +45,86 @@ tags_raw:
 - Sustainability
 - Content Management
 apis:
-- name: CarbonFarm CMS Content API
-  description: >-
-    The Directus 10.10.7 headless CMS that serves carbonfarm.tech's news posts and image assets.
-    It publishes a real OpenAPI 3.0.1 (14 operations) and a full GraphQL SDL anonymously at
-    /server/specs/oas and /server/specs/graphql, but both are auto-generated from the live schema
-    rather than authored as a developer contract, and the data operations return HTTP 403 to
-    anonymous callers. This is internal website infrastructure, NOT CarbonFarm's rice MRV product
-    API — the content model is two entities (post, directus_files) and contains no paddy,
-    emissions, project or carbon-credit data. Recorded because it is the only machine-readable
-    contract the company publishes; it is not a product CarbonFarm sells or supports.
+- aid: carbonfarm:carbonfarm-assets-api
+  name: CarbonFarm Assets API
+  description: Image typed files can be dynamically resized and transformed to fit any need.
   baseURL: https://cms.int.carbonfarm.app
   tags:
-  - Content Management
-  - GraphQL
+  - Assets
   properties:
   - type: OpenAPI
-    url: openapi/carbonfarm-cms-openapi.json
+    url: openapi/carbonfarm-assets-api-openapi.yml
   - type: GraphQL
     url: graphql/carbonfarm-cms-schema.graphql
-  - type: Overlay
-    url: overlays/carbonfarm-cms-overlay.yaml
-  x-humanurl-reason: >-
-    humanURL is deliberately omitted. There is no human-readable page for this API anywhere — no
-    docs, no reference, and the Directus admin app at /admin returns 404. Pointing humanURL at the
-    marketing news page would assert documentation that does not exist.
-  x-ownership-evidence: >-
-    The spec's servers[] names cms.int.carbonfarm.app (the fetch host); /server/info reports
-    project_name "CarbonFarm CMS"; the host is a subdomain of carbonfarm.app, which also serves
-    CarbonFarm's client login (web-login.carbonfarm.app) and portal (portal.carbonfarm.app); and
-    carbonfarm.tech loads its post images from cms.int.carbonfarm.app/assets/.
+- aid: carbonfarm:carbonfarm-authentication-api
+  name: CarbonFarm Authentication API
+  description: >-
+    All data within the platform is private by default. The public role can be configured to expose data
+    without authentication, or you can pass an access token to the API to access private data.
+  baseURL: https://cms.int.carbonfarm.app
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/carbonfarm-authentication-api-openapi.yml
+  - type: GraphQL
+    url: graphql/carbonfarm-cms-schema.graphql
+- aid: carbonfarm:carbonfarm-files-api
+  name: CarbonFarm Files API
+  description: >-
+    Files can be saved in any given location. Directus has a powerful assets endpoint that can be used
+    to generate thumbnails for images on the fly.
+  baseURL: https://cms.int.carbonfarm.app
+  tags:
+  - Files
+  properties:
+  - type: OpenAPI
+    url: openapi/carbonfarm-files-api-openapi.yml
+  - type: GraphQL
+    url: graphql/carbonfarm-cms-schema.graphql
+- aid: carbonfarm:carbonfarm-items-api
+  name: CarbonFarm Items API
+  description: The Items API from CarbonFarm — 2 operation(s) for items.
+  baseURL: https://cms.int.carbonfarm.app
+  tags:
+  - Items
+  properties:
+  - type: OpenAPI
+    url: openapi/carbonfarm-items-api-openapi.yml
+  - type: GraphQL
+    url: graphql/carbonfarm-cms-schema.graphql
+- aid: carbonfarm:carbonfarm-itemspost-api
+  name: CarbonFarm Items Post API
+  description: The ItemsPost API from CarbonFarm — 2 operation(s) for itemspost.
+  baseURL: https://cms.int.carbonfarm.app
+  tags:
+  - ItemsPost
+  properties:
+  - type: OpenAPI
+    url: openapi/carbonfarm-itemspost-api-openapi.yml
+  - type: GraphQL
+    url: graphql/carbonfarm-cms-schema.graphql
+- aid: carbonfarm:carbonfarm-server-api
+  name: CarbonFarm Server API
+  description: >-
+    Access to where Directus runs. Allows you to make sure your server has everything needed to run the
+    platform, and check what kind of latency we're dealing with.
+  baseURL: https://cms.int.carbonfarm.app
+  tags:
+  - Server
+  properties:
+  - type: OpenAPI
+    url: openapi/carbonfarm-server-api-openapi.yml
+  - type: GraphQL
+    url: graphql/carbonfarm-cms-schema.graphql
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/carbonfarm-cms-overlay.yaml
 - type: Website
   url: https://www.carbonfarm.tech
 - type: Blog
