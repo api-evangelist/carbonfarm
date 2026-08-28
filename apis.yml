@@ -16,6 +16,17 @@ description: >-
   platform sits behind an Auth0 organization login. The one machine-readable contract it publishes
   is the Directus headless CMS behind its marketing website.
 url: https://raw.githubusercontent.com/api-evangelist/carbonfarm/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://carbonfarm.tech/opengraph-image.png?opengraph-image.d25adc5b.png
 x-type: company
 x-source: serena-portfolio
