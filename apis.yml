@@ -87,6 +87,8 @@ apis:
     to generate thumbnails for images on the fly.
   baseURL: https://cms.int.carbonfarm.app
   tags:
+  - File
+  tags_raw:
   - Files
   properties:
   - type: OpenAPI
@@ -98,6 +100,8 @@ apis:
   description: The Items API from CarbonFarm — 2 operation(s) for items.
   baseURL: https://cms.int.carbonfarm.app
   tags:
+  - Item
+  tags_raw:
   - Items
   properties:
   - type: OpenAPI
