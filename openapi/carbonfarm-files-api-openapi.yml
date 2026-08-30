@@ -1,0 +1,232 @@
+openapi: 3.2.0
+info:
+  title: Dynamic API Specification Files API
+  description: This is a dynamically generated API specification for all endpoints existing on the current project.
+  version: 10.10.7
+servers:
+- url: cms.int.carbonfarm.app
+  description: Your current Directus instance.
+tags:
+- name: Files
+  description: Files can be saved in any given location. Directus has a powerful assets endpoint that can be used to generate thumbnails for images on the fly.
+  x-collection: directus_files
+paths:
+  /files:
+    get:
+      summary: List Files
+      description: List the files.
+      tags:
+      - Files
+      operationId: getFiles
+      parameters:
+      - $ref: '#/components/parameters/Fields'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Offset'
+      - $ref: '#/components/parameters/Sort'
+      - $ref: '#/components/parameters/Filter'
+      - $ref: '#/components/parameters/Search'
+      - $ref: '#/components/parameters/Meta'
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Files'
+                  meta:
+                    $ref: '#/components/schemas/x-metadata'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /files/{id}:
+    get:
+      summary: Retrieve a Files
+      description: Retrieve a single file by unique identifier.
+      tags:
+      - Files
+      operationId: getFile
+      parameters:
+      - $ref: '#/components/parameters/UUId'
+      - $ref: '#/components/parameters/Fields'
+      - $ref: '#/components/parameters/Meta'
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Files'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+components:
+  schemas:
+    x-metadata:
+      type: object
+      properties:
+        total_count:
+          description: Returns the total item count of the collection you're querying.
+          type: integer
+        filter_count:
+          description: Returns the item count of the collection you're querying, taking the current filter/search parameters into account.
+          type: integer
+    Files:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the file.
+          example: 8cbb43fe-4cdf-4991-8352-c461779cec02
+          type: string
+        filename_disk:
+          description: Name of the file on disk. By default, Directus uses a random hash for the filename.
+          example: a88c3b72-ac58-5436-a4ec-b2858531333a.jpg
+          type: string
+        filename_download:
+          description: How you want to the file to be named when it's being downloaded.
+          example: avatar.jpg
+          type: string
+        type:
+          description: MIME type of the file.
+          example: image/jpeg
+          type: string
+        folder:
+          description: Virtual folder where this file resides in.
+          example: null
+          oneOf:
+          - type: string
+          - $ref: '#/components/schemas/Folders'
+        filesize:
+          description: Size of the file in bytes.
+          example: 137862
+          type: integer
+        width:
+          description: Width of the file in pixels. Only applies to images.
+          example: 800
+          type:
+          - integer
+          - 'null'
+        height:
+          description: Height of the file in pixels. Only applies to images.
+          example: 838
+          type:
+          - integer
+          - 'null'
+        embed:
+          description: Where the file was embedded from.
+          example: null
+          type:
+          - string
+          - 'null'
+        description:
+          description: Description for the file.
+          type:
+          - string
+          - 'null'
+        metadata:
+          description: IPTC, Exif, and ICC metadata extracted from file
+          type:
+          - object
+          - 'null'
+      x-collection: directus_files
+  parameters:
+    UUId:
+      description: Unique identifier for the object.
+      name: id
+      in: path
+      required: true
+      schema:
+        example: 8cbb43fe-4cdf-4991-8352-c461779cec02
+        type: string
+    Search:
+      description: Filter by items that contain the given search query in one of their fields.
+      in: query
+      name: search
+      required: false
+      schema:
+        type: string
+    Sort:
+      description: 'How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
+
+        '
+      in: query
+      name: sort
+      required: false
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    Meta:
+      description: What metadata to return in the response.
+      in: query
+      name: meta
+      required: false
+      schema:
+        type: string
+    Offset:
+      description: How many items to skip when fetching data.
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+    Limit:
+      description: A limit on the number of objects that are returned.
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+    Filter:
+      description: Select items in collection by given conditions.
+      in: query
+      name: filter
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            example:
+              <field>:
+                <operator>: <value>
+    Fields:
+      description: Control what fields are being returned in the object.
+      in: query
+      name: fields
+      required: false
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: 'Error: Unauthorized request'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
+  securitySchemes:
+    KeyAuth:
+      type: apiKey
+      in: query
+      name: access_token
+    Auth:
+      type: apiKey
+      in: header
+      name: Authorization

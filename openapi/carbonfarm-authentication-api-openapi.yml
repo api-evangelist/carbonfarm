@@ -1,0 +1,281 @@
+openapi: 3.2.0
+info:
+  title: Dynamic API Specification Authentication API
+  description: This is a dynamically generated API specification for all endpoints existing on the current project.
+  version: 10.10.7
+servers:
+- url: cms.int.carbonfarm.app
+  description: Your current Directus instance.
+tags:
+- name: Authentication
+  description: All data within the platform is private by default. The public role can be configured to expose data without authentication, or you can pass an access token to the API to access private data.
+paths:
+  /auth/login:
+    post:
+      summary: Retrieve a Temporary Access Token
+      description: Retrieve a Temporary Access Token
+      tags:
+      - Authentication
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              - password
+              properties:
+                email:
+                  type: string
+                  example: admin@example.com
+                  description: Email address of the user you're retrieving the access token for.
+                password:
+                  type: string
+                  description: Password of the user.
+                  format: password
+                  example: password
+                mode:
+                  type: string
+                  enum:
+                  - json
+                  - cookie
+                  - session
+                  default: json
+                  description: Whether to retrieve the refresh token in the JSON response, or in a httpOnly cookie.
+                otp:
+                  type: string
+                  description: The user's one-time-password (if MFA is enabled).
+      responses:
+        '200':
+          description: Successful authentification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJhbGciOiJI...
+                      expires:
+                        type: integer
+                        example: 900
+                      refresh_token:
+                        type: string
+                        example: yuOJkjdPXMd...
+  /auth/refresh:
+    post:
+      summary: Refresh Token
+      description: Refresh a Temporary Access Token.
+      tags:
+      - Authentication
+      operationId: refresh
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJ0eXAiOiJKV...
+                  description: JWT access token you want to refresh. This token can't be expired.
+                mode:
+                  type: string
+                  enum:
+                  - json
+                  - cookie
+                  - session
+                  default: json
+                  description: Whether to submit and retrieve the refresh token in the JSON response, or in a httpOnly cookie.
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJhbGciOiJI...
+                      expires:
+                        type: integer
+                        example: 900
+                      refresh_token:
+                        type: string
+                        example: Gy-caJMpmGTA...
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /auth/logout:
+    post:
+      summary: Log Out
+      description: Log Out
+      tags:
+      - Authentication
+      operationId: logout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJ0eXAiOiJKV...
+                  description: The refresh token to invalidate. If you have the refresh token in a cookie through /auth/login, you don't have to submit it here.
+                mode:
+                  type: string
+                  enum:
+                  - json
+                  - cookie
+                  - session
+                  description: Whether the refresh token is submitted in the JSON response, or in a httpOnly cookie.
+      responses:
+        '200':
+          description: Request successful
+  /auth/password/request:
+    post:
+      tags:
+      - Authentication
+      operationId: passwordRequest
+      summary: Request a Password Reset
+      description: Request a reset password email to be send.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              properties:
+                email:
+                  type: string
+                  example: admin@example.com
+                  description: Email address of the user you're requesting a reset for.
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /auth/password/reset:
+    post:
+      tags:
+      - Authentication
+      operationId: passwordReset
+      summary: Reset a Password
+      description: The request a password reset endpoint sends an email with a link to the admin app which in turn uses this endpoint to allow the user to reset their password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - token
+              - password
+              properties:
+                token:
+                  type: string
+                  example: eyJ0eXAiOiJKV1Qi...
+                  description: One-time use JWT token that is used to verify the user.
+                password:
+                  type: string
+                  example: password
+                  format: password
+                  description: New password for the user.
+      responses:
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /auth/oauth:
+    get:
+      tags:
+      - Authentication
+      operationId: oauth
+      summary: List OAuth Providers
+      description: List configured OAuth providers.
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  public:
+                    type: boolean
+                  data:
+                    type: array
+                    example:
+                    - github
+                    - facebook
+                    items:
+                      type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /auth/oauth/{provider}:
+    get:
+      summary: Authenticated using an OAuth provider
+      description: Start OAuth flow using the specified provider
+      tags:
+      - Authentication
+      operationId: oauthProvider
+      parameters:
+      - name: provider
+        in: path
+        description: Key of the activated OAuth provider.
+        required: true
+        schema:
+          type: string
+      - name: redirect
+        in: query
+        required: false
+        description: Where to redirect on successful login.<br/>If set the authentication details are set inside cookies otherwise a JSON is returned.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  public:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+components:
+  responses:
+    UnauthorizedError:
+      description: 'Error: Unauthorized request'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
+  securitySchemes:
+    KeyAuth:
+      type: apiKey
+      in: query
+      name: access_token
+    Auth:
+      type: apiKey
+      in: header
+      name: Authorization

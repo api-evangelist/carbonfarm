@@ -1,0 +1,97 @@
+openapi: 3.2.0
+info:
+  title: Dynamic API Specification Server API
+  description: This is a dynamically generated API specification for all endpoints existing on the current project.
+  version: 10.10.7
+servers:
+- url: cms.int.carbonfarm.app
+  description: Your current Directus instance.
+tags:
+- name: Server
+  description: Access to where Directus runs. Allows you to make sure your server has everything needed to run the platform, and check what kind of latency we're dealing with.
+paths:
+  /server/info:
+    get:
+      summary: System Info
+      description: Perform a system status check and return the options.
+      operationId: serverInfo
+      parameters:
+      - description: The first time you create a project, the provided token will be saved and required for subsequent project installs. It can also be found and configured in `/config/__api.json` on your server.
+        in: query
+        name: super_admin_token
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: object
+                type: object
+          description: Successful request
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+      tags:
+      - Server
+  /server/ping:
+    get:
+      summary: Ping
+      description: Ping, pong. Ping.. pong.
+      operationId: ping
+      responses:
+        '200':
+          content:
+            application/text:
+              schema:
+                type: string
+                pattern: pong
+                example: pong
+          description: Successful request
+      tags:
+      - Server
+components:
+  responses:
+    UnauthorizedError:
+      description: 'Error: Unauthorized request'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
+    NotFoundError:
+      description: 'Error: Not found.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
+  securitySchemes:
+    KeyAuth:
+      type: apiKey
+      in: query
+      name: access_token
+    Auth:
+      type: apiKey
+      in: header
+      name: Authorization
