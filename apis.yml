@@ -141,6 +141,8 @@ apis:
     platform, and check what kind of latency we're dealing with.
   baseURL: https://cms.int.carbonfarm.app
   tags:
+  - Servers
+  tags_raw:
   - Server
   properties:
   - type: OpenAPI
