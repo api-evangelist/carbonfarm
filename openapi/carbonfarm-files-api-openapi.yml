@@ -66,16 +66,78 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 components:
+  parameters:
+    Filter:
+      description: Select items in collection by given conditions.
+      in: query
+      name: filter
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            example:
+              <field>:
+                <operator>: <value>
+    UUId:
+      description: Unique identifier for the object.
+      name: id
+      in: path
+      required: true
+      schema:
+        example: 8cbb43fe-4cdf-4991-8352-c461779cec02
+        type: string
+    Limit:
+      description: A limit on the number of objects that are returned.
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+    Meta:
+      description: What metadata to return in the response.
+      in: query
+      name: meta
+      required: false
+      schema:
+        type: string
+    Sort:
+      description: 'How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
+
+        '
+      in: query
+      name: sort
+      required: false
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    Fields:
+      description: Control what fields are being returned in the object.
+      in: query
+      name: fields
+      required: false
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+    Offset:
+      description: How many items to skip when fetching data.
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+    Search:
+      description: Filter by items that contain the given search query in one of their fields.
+      in: query
+      name: search
+      required: false
+      schema:
+        type: string
   schemas:
-    x-metadata:
-      type: object
-      properties:
-        total_count:
-          description: Returns the total item count of the collection you're querying.
-          type: integer
-        filter_count:
-          description: Returns the item count of the collection you're querying, taking the current filter/search parameters into account.
-          type: integer
     Files:
       type: object
       properties:
@@ -134,77 +196,15 @@ components:
           - object
           - 'null'
       x-collection: directus_files
-  parameters:
-    UUId:
-      description: Unique identifier for the object.
-      name: id
-      in: path
-      required: true
-      schema:
-        example: 8cbb43fe-4cdf-4991-8352-c461779cec02
-        type: string
-    Search:
-      description: Filter by items that contain the given search query in one of their fields.
-      in: query
-      name: search
-      required: false
-      schema:
-        type: string
-    Sort:
-      description: 'How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
-
-        '
-      in: query
-      name: sort
-      required: false
-      explode: false
-      schema:
-        type: array
-        items:
-          type: string
-    Meta:
-      description: What metadata to return in the response.
-      in: query
-      name: meta
-      required: false
-      schema:
-        type: string
-    Offset:
-      description: How many items to skip when fetching data.
-      in: query
-      name: offset
-      required: false
-      schema:
-        type: integer
-    Limit:
-      description: A limit on the number of objects that are returned.
-      in: query
-      name: limit
-      required: false
-      schema:
-        type: integer
-    Filter:
-      description: Select items in collection by given conditions.
-      in: query
-      name: filter
-      required: false
-      content:
-        application/json:
-          schema:
-            type: object
-            example:
-              <field>:
-                <operator>: <value>
-    Fields:
-      description: Control what fields are being returned in the object.
-      in: query
-      name: fields
-      required: false
-      explode: false
-      schema:
-        type: array
-        items:
-          type: string
+    x-metadata:
+      type: object
+      properties:
+        total_count:
+          description: Returns the total item count of the collection you're querying.
+          type: integer
+        filter_count:
+          description: Returns the item count of the collection you're querying, taking the current filter/search parameters into account.
+          type: integer
   responses:
     UnauthorizedError:
       description: 'Error: Unauthorized request'

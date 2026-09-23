@@ -13,7 +13,6 @@ paths:
   /auth/login:
     post:
       summary: Retrieve a Temporary Access Token
-      description: Retrieve a Temporary Access Token
       tags:
       - Authentication
       operationId: login
@@ -116,7 +115,6 @@ paths:
   /auth/logout:
     post:
       summary: Log Out
-      description: Log Out
       tags:
       - Authentication
       operationId: logout

@@ -1,0 +1,33 @@
+{
+  "provider": "carbonfarm",
+  "sources": [
+    "_original/carbonfarm-cms-openapi.json"
+  ],
+  "outputs": [
+    "carbonfarm-assets-api-openapi.yml",
+    "carbonfarm-authentication-api-openapi.yml",
+    "carbonfarm-files-api-openapi.yml",
+    "carbonfarm-items-api-openapi.yml",
+    "carbonfarm-itemspost-api-openapi.yml",
+    "carbonfarm-server-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [
+    "carbonfarm-cms-openapi.json: dangling $ref: #/components/schemas/Folders"
+  ],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "carbonfarm-cms-openapi.json: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "carbonfarm-cms-openapi.json: declared missing tag: Items",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "carbonfarm-assets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "carbonfarm-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "carbonfarm-files-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "carbonfarm-items-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "carbonfarm-itemspost-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "carbonfarm-server-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
