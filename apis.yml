@@ -56,7 +56,7 @@ tags:
 - MRV
 - Satellite Imagery
 - Remote Sensing
-- Machine-Learning
+- Machine Learning
 - Sustainability
 - Content Management
 tags_raw:
@@ -70,6 +70,7 @@ tags_raw:
 - Machine Learning
 - Sustainability
 - Content Management
+- Machine-Learning
 apis:
 - aid: carbonfarm:carbonfarm-assets-api
   name: CarbonFarm Assets API
