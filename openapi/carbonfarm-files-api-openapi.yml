@@ -82,6 +82,35 @@ components:
       required: false
       schema:
         type: string
+    Filter:
+      description: Select items in collection by given conditions.
+      in: query
+      name: filter
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            example:
+              <field>:
+                <operator>: <value>
+    Offset:
+      description: How many items to skip when fetching data.
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+    Fields:
+      description: Control what fields are being returned in the object.
+      in: query
+      name: fields
+      required: false
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
     Sort:
       description: 'How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
 
@@ -101,18 +130,6 @@ components:
       required: false
       schema:
         type: integer
-    Filter:
-      description: Select items in collection by given conditions.
-      in: query
-      name: filter
-      required: false
-      content:
-        application/json:
-          schema:
-            type: object
-            example:
-              <field>:
-                <operator>: <value>
     Meta:
       description: What metadata to return in the response.
       in: query
@@ -120,24 +137,32 @@ components:
       required: false
       schema:
         type: string
-    Offset:
-      description: How many items to skip when fetching data.
-      in: query
-      name: offset
-      required: false
-      schema:
-        type: integer
-    Fields:
-      description: Control what fields are being returned in the object.
-      in: query
-      name: fields
-      required: false
-      explode: false
-      schema:
-        type: array
-        items:
-          type: string
+  responses:
+    UnauthorizedError:
+      description: 'Error: Unauthorized request'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
   schemas:
+    x-metadata:
+      type: object
+      properties:
+        total_count:
+          description: Returns the total item count of the collection you're querying.
+          type: integer
+        filter_count:
+          description: Returns the item count of the collection you're querying, taking the current filter/search parameters into account.
+          type: integer
     Files:
       type: object
       properties:
@@ -196,31 +221,6 @@ components:
           - object
           - 'null'
       x-collection: directus_files
-    x-metadata:
-      type: object
-      properties:
-        total_count:
-          description: Returns the total item count of the collection you're querying.
-          type: integer
-        filter_count:
-          description: Returns the item count of the collection you're querying, taking the current filter/search parameters into account.
-          type: integer
-  responses:
-    UnauthorizedError:
-      description: 'Error: Unauthorized request'
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int64
-                  message:
-                    type: string
   securitySchemes:
     KeyAuth:
       type: apiKey

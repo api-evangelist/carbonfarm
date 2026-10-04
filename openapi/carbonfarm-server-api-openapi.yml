@@ -56,8 +56,8 @@ paths:
       - Server
 components:
   responses:
-    NotFoundError:
-      description: 'Error: Not found.'
+    UnauthorizedError:
+      description: 'Error: Unauthorized request'
       content:
         application/json:
           schema:
@@ -71,8 +71,8 @@ components:
                     format: int64
                   message:
                     type: string
-    UnauthorizedError:
-      description: 'Error: Unauthorized request'
+    NotFoundError:
+      description: 'Error: Not found.'
       content:
         application/json:
           schema:
