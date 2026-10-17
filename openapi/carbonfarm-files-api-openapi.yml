@@ -75,25 +75,6 @@ components:
       schema:
         example: 8cbb43fe-4cdf-4991-8352-c461779cec02
         type: string
-    Search:
-      description: Filter by items that contain the given search query in one of their fields.
-      in: query
-      name: search
-      required: false
-      schema:
-        type: string
-    Filter:
-      description: Select items in collection by given conditions.
-      in: query
-      name: filter
-      required: false
-      content:
-        application/json:
-          schema:
-            type: object
-            example:
-              <field>:
-                <operator>: <value>
     Offset:
       description: How many items to skip when fetching data.
       in: query
@@ -111,6 +92,18 @@ components:
         type: array
         items:
           type: string
+    Filter:
+      description: Select items in collection by given conditions.
+      in: query
+      name: filter
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            example:
+              <field>:
+                <operator>: <value>
     Sort:
       description: 'How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.
 
@@ -123,13 +116,6 @@ components:
         type: array
         items:
           type: string
-    Limit:
-      description: A limit on the number of objects that are returned.
-      in: query
-      name: limit
-      required: false
-      schema:
-        type: integer
     Meta:
       description: What metadata to return in the response.
       in: query
@@ -137,22 +123,20 @@ components:
       required: false
       schema:
         type: string
-  responses:
-    UnauthorizedError:
-      description: 'Error: Unauthorized request'
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int64
-                  message:
-                    type: string
+    Search:
+      description: Filter by items that contain the given search query in one of their fields.
+      in: query
+      name: search
+      required: false
+      schema:
+        type: string
+    Limit:
+      description: A limit on the number of objects that are returned.
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
   schemas:
     x-metadata:
       type: object
@@ -221,6 +205,22 @@ components:
           - object
           - 'null'
       x-collection: directus_files
+  responses:
+    UnauthorizedError:
+      description: 'Error: Unauthorized request'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
   securitySchemes:
     KeyAuth:
       type: apiKey
