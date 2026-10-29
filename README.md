@@ -64,6 +64,117 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-CarbonFarm is a company surfaced as a portfolio company of serena and added to the API Evangelist network as a stub for enrichment. Sector: climate-tech. This profile is a lead awaiting the enrichment pipeline.
+CarbonFarm Technology is a French climate-tech company (registered in Nanterre, SIREN 912160389) that uses satellite imagery and proprietary machine-learning models to monitor, measure and verify greenhouse-gas reductions in rice production. Rice accounts for roughly 12% of global methane emissions, and practices such as Alternate Wetting and Drying can cut paddy methane substantially — but conventional MRV depends on self-declared practices recorded in paper logbooks, which is expensive to collect from smallholders and open to fraud. CarbonFarm detects water-management and straw-management practices remotely at paddy level, estimates baseline and project emissions with validated models, and verifies additionality, at a fraction of the cost of ground-based MRV. Customers and partners named publicly include Mars Food, Tilda, Beneo, Amru Rice, Vida Energy, Fortune Rice, Ostrom Climate, Core Carbon X, the Sustainable Rice Platform, UNDP, Danone, Rikolto, Cornell University, IRRI and Regrow Ag. CarbonFarm operates no developer program: there is no developer portal, API reference, SDK or public API product, and the client platform sits behind an Auth0 organization login. The one machine-readable contract it publishes is the Directus headless CMS behind its marketing website.
 
-Source: portfolio company of [serena](https://github.com/api-evangelist/serena) — https://www.carbonfarm.tech
+**Areas:** Company · Climate Tech · Carbon Credits · Agriculture · MRV · Satellite Imagery · Remote Sensing · Machine Learning · Sustainability · Content Management
+
+## CarbonFarm on APIs.io
+
+Everything profiled for CarbonFarm is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/carbonfarm/](https://apis.io/providers/carbonfarm/)** — or go straight to one of the APIs or properties below.
+
+### APIs (6)
+
+- [CarbonFarm Assets API](https://apis.io/apis/carbonfarm/carbonfarm-assets-api/) — Image typed files can be dynamically resized and transformed to fit any need.
+- [CarbonFarm Authentication API](https://apis.io/apis/carbonfarm/carbonfarm-authentication-api/) — All data within the platform is private by default. The public role can be configured to expose data without authentication, or you can pass an access token…
+- [CarbonFarm Files API](https://apis.io/apis/carbonfarm/carbonfarm-files-api/) — Files can be saved in any given location. Directus has a powerful assets endpoint that can be used to generate thumbnails for images on the fly.
+- [CarbonFarm Items API](https://apis.io/apis/carbonfarm/carbonfarm-items-api/) — The Items API from CarbonFarm — 2 operation(s) for items.
+- [CarbonFarm Items Post API](https://apis.io/apis/carbonfarm/carbonfarm-itemspost-api/) — The ItemsPost API from CarbonFarm — 2 operation(s) for itemspost.
+- [CarbonFarm Server API](https://apis.io/apis/carbonfarm/carbonfarm-server-api/) — Access to where Directus runs. Allows you to make sure your server has everything needed to run the platform, and check what kind of latency we're dealing with.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### GraphQL (1)
+
+GraphQL schemas.
+
+- [CarbonFarm CMS — GraphQL schema](https://apis.io/graphqls/carbonfarm/carbonfarm-cms-graphql/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Carbonfarm Cms Overlay](https://apis.io/overlays/carbonfarm/carbonfarm-cms-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Carbonfarm Authentication](https://apis.io/security/carbonfarm/carbonfarm-authentication/)
+- [Carbonfarm Domain Security](https://apis.io/security/carbonfarm/carbonfarm-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Carbonfarm Plans Pricing](https://apis.io/plans/carbonfarm/carbonfarm-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Carbonfarm Rate Limits](https://apis.io/rate-limits/carbonfarm/carbonfarm-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.carbonfarm.tech)
+- [Support](https://carbonfarm.tech/contact)
+- [Blog](https://carbonfarm.tech/posts)
+- [Privacy policy](https://carbonfarm.tech/privacy)
+- [GitHub](https://github.com/carbonfarmtech)
+
+## API Evangelist rating
+
+**Kin Score 27.7** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 57.1 |
+| Contract quality | 48.1 |
+| Contract governance | 18.2 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 20.8 |
+| Access clarity | 17.1 |
+
+**Agent readiness 34.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+
+**Regulatory alignment 19.1** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/carbonfarm/](https://apis.io/providers/carbonfarm/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for CarbonFarm: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/carbonfarm/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
